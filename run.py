@@ -2,7 +2,7 @@ from selenium import webdriver
 from time import sleep
 import os
 import protected
-import time,sys
+import time
 
 log = open("log.txt",'a')
 class InstaBot:
