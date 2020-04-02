@@ -1,6 +1,14 @@
-# Instagram Bot Gen Z
+# Instagram Follower Bot Gen-Z V1.0
 
 A python3-selenium web driver based instagram bot to make following people eaasy for content creators.
+
+Current working features:
+
+1. Get the list of your followers.(Gets stored in myfollowers.txt)
+
+2. Follow the followers of XYZ
+
+3. Follow likers of some post
 
 Pre-requisites:
 ```
