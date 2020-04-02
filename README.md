@@ -13,10 +13,12 @@ To use the bot:
    1. Clone this repo.
 
    2. Check if the pre requisites are fulfilled...and check if python is working properly.
+   
+   3. Edit the protected.py file and type your login credentials and save it.
 
-   3. Open Terminal/Command Prompt and run the bot using: `python3 run.py`
+   4. Open Terminal/Command Prompt and run the bot using: `python3 run.py`
 
-   4. Follow the text cues given by the terminal and get going.
+   5. Follow the text cues given by the terminal and get going.
 
 ----
 * To install chrome driver, follow [this video](https://www.youtube.com/watch?v=dz59GsdvUF8)
