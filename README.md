@@ -4,11 +4,13 @@ A python3-selenium web driver based instagram bot to make following people eaasy
 
 Current working features:
 
-1. Get the list of your followers.(Gets stored in myfollowers.txt)
+1. Get the list of your followers.(Gets stored in a .txt file)
 
-2. Follow the followers of XYZ
+2. Get list of @username's followers.(Gets stored in a .txt file)
 
-3. Follow likers of some post
+3. Follow the followers of @username.
+
+4. Follow likers of some post.
 
 Pre-requisites:
 ```
