@@ -27,12 +27,12 @@ class InstaBot:
             while self.driver.find_elements_by_xpath("//button[contains(text(), 'Not Now')]") > 0:
                 self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
                     .click()
-                sleep(2)
+                sleep(3)
         except:
             sleep(1)
         
         print("Bot alive! :)")
-        str = time.asctime(time.localtime(time.time())) + '->  Login Successful ('+username+'):\n'
+        str = time.asctime(time.localtime(time.time())) + '->  Login Successful ('+username+'):'
         log.write(str)
 
     def get_my_followers(self):
@@ -58,10 +58,9 @@ class InstaBot:
         list_.close()
         str_ = "\n\tFetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+self.username
         log.write(str_)
-        self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
-            .click()
-        
-        
+        print("Done extracting")
+
+              
     def get_followers_of(self):
         username = input("Username of target: ")
         file = self.username + "_followers_" 
@@ -84,87 +83,70 @@ class InstaBot:
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
         
-        str_ = "\n\tFetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+self.username
+        str_ = "\n\tFetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+ username
         log.write(str_)
-        self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
-            .click()
+        print("Done extracting")
 
         
     def scroll_followers_list(self, followers):
         sleep(5)
         scroll_element  = self.driver.find_element_by_xpath("//div[@class='isgrP']")
         length = 0
-        while  length <= followers  :
+        sleep(3)
+        self.driver.execute_script("return arguments[0].scrollIntoView();", scroll_element)
+        
+        while  length < followers-1  :
+            
             sleep(3)
-            last_element  = (self.driver.find_elements_by_xpath("//div[@class='wo9IH']"))[-5]
+            last_element  = (scroll_element.find_elements_by_tag_name('button'))[-5]
             
             self.driver.execute_script("return arguments[0].scrollIntoView();", last_element)
+            
             sleep(0.5)
-            while  len(self.driver.find_elements_by_xpath("//div[@class='By4nA']"))>0:           
+            while  len(scroll_element.find_elements_by_xpath("//div[@class='By4nA']"))>0:           
+                print("sleeping")
                 sleep(2)
             
-            sleep(2)
-            length = len(scroll_element.find_elements_by_xpath("//div[@class='wo9IH']"))
-        
-
+            sleep(1)
+            length = len(scroll_element.find_elements_by_tag_name('button'))
+    
     def follow_followers_of(self,username):
+        
         self.driver.get('https://www.instagram.com/' + username + '/')
         sleep(5)
         
         no_f = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]").text    
         fol = no_f.replace(" followers", "")
-        fol = fol.replace(",", "")
-        print("followers: ",int(fol))
-        sleep(1)
-        
+        fol = int(fol.replace(",", ""))
+        print("followers: ",fol)        
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
         sleep(2)
-        self.scroll_by_number(9)
-        sleep(2)
+
         count = 0
         clearline = '\033[A                             \033[A'
-        for i in range(int(fol)):
-            if(self.count<100):
-                try:          
-                    button = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li["+str(i+1)+"]/div/div[2]/button")
-                    
-                    if(button.text == 'Follow'):
-                        button.click()
-                        count += 1
-                        print(clearline)
-                        print('followed : ',self.count)
-                        sleep(2)
-                    else:
-                        print (clearline)
-                        print("Skipped! ")
-                        sleep(0.25)                
-                except:
-                    try:
-                        button = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li["+str(i+2)+"]/div/div[2]/button")
-                    
-                        if(button.text == 'Follow'):
-                            button.click()
-                            count = count + 1
-                            print(clearline)
-                            print('followed : ',self.count)
-                            sleep(2)
-                        else:
-                            print (clearline)
-                            print("Skipped! ")
-                            sleep(0.25)
-                    except:
-                        try:
-                            self.driver.find_element_by_xpath("//button[contains(text(), 'Cancel')]")\
-                                .click()
-                            sleep(1)
-                        except:
-                            print("Error: Terminating!")
-                            break
-            else:
-                print("process terminated. follow requests > 100")
-                break   
-        log.write("\tFollowed "+ str(count) +" followers of "+username+'\n' )
+        
+        target = int(input("Enter max people to follow: "))
+        
+        scroll_element  = self.driver.find_element_by_xpath("//div[@class='isgrP']")
+        buttons = scroll_element.find_elements_by_tag_name('button')
+        for button in buttons:
+            self.driver.execute_script("return arguments[0].scrollIntoView();", button)
+            
+            if button.text == 'Follow':    
+                button.click()
+                count += 1
+                print("Followed",count)
+                if count >= target :
+                    break
+                print(clearline)  
+                if count == 50:
+                    sleep(20)
+                if count==100:
+                    sleep(30)  
+            sleep(2)
+        
+        log.write("\n\tFollowed "+ str(count) +" followers of "+username)
         self.count += count
     
     def follow_likers(self):
@@ -177,16 +159,14 @@ class InstaBot:
         _ = input('Continue? ')
         
         count = 0
-        try:
-            self.driver.find_element_by_xpath('/html/body/div[3]/div[2]/div/article/div[2]/section[2]/div/div/button')\
-                .click()
-        except:
-            self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[2]/section[2]/div/div/button')\
-                .click()
-        self.scroll_to_bottom()
+        
+        div = self.driver.find_element_by_xpath("//div[@class ='Nm9Fw']")
+        bttn = div.find_element_by_xpath("//button[contains(text(), 'others')]")
+        bttn.click()
         sleep(5)
-        while count<150:   
-            # try:
+        
+        target = int(input("Enter max people to follow: "))
+        while count<target:   
             sleep(2)     
             buttons = self.driver.find_elements_by_css_selector(('button[type="button"]'))
             sleep(1)
@@ -198,15 +178,15 @@ class InstaBot:
                     
                     count+=1 
                     if count == 50:
-                        sleep(30)
-                    if count>100:
+                        sleep(20)
+                    elif count==100:
                         sleep(30)
     
             sleep(1)
 
-        log.write("\tFollowed "+ str(count) +" followers from "+usr+"'s post\n")
+        log.write("\n\tFollowed "+ str(count) +" followers from "+usr+"'s post")
         self.count += count
-
+        
     
     def __del__(self):
         try:
