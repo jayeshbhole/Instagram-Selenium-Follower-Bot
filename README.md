@@ -1,4 +1,4 @@
-# Instagram Follower Bot Gen-Z V1.0
+# Instagram Follower Bot V1.0
 
 A python3-selenium web driver based instagram bot to make following people eaasy for content creators.
 
