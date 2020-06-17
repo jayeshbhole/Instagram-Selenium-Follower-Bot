@@ -1,4 +1,4 @@
-# Instagram Follower Bot V1.0
+# Instagram Follower Bot V1.2
 
 A python3-selenium web driver based instagram bot to make following people eaasy for content creators.
 
