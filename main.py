@@ -12,14 +12,8 @@ class InstaBot:
     
     def __init__(self, username, pw):
         global log
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--no-sandbox")
-        self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
         log.write("__Session start__\n\t")
-        # self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome()
         self.username = username
         self.driver.get("https://instagram.com")
         sleep(5)
