@@ -1,4 +1,4 @@
-# Instagram Follower Bot V1.2
+# Instagram Follower Bot V1.2.4
 
 A python3-selenium web driver based instagram bot to make following people eaasy for content creators.
 
@@ -26,7 +26,7 @@ To use the bot:
    
    3. Edit the protected.py file and type your login credentials and save it.
 
-   4. Open Terminal/Command Prompt and run the bot using: `python3 run.py`
+   4. Open Terminal/Command Prompt and run the bot using: `python3 main.py`
 
    5. Follow the text cues given by the terminal and get going.
 
