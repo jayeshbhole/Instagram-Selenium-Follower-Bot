@@ -12,8 +12,14 @@ class InstaBot:
     
     def __init__(self, username, pw):
         global log
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+        self.driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
         log.write("__Session start__\n\t")
-        self.driver = webdriver.Chrome()
+        # self.driver = webdriver.Chrome()
         self.username = username
         self.driver.get("https://instagram.com")
         sleep(5)
@@ -38,7 +44,7 @@ class InstaBot:
         log.write(str)
 
     def get_my_followers(self):
-        file = self.username + "_followers_" 
+        file = self.username + "_followers_"
         list_ = open(file,"w+")
         sleep(2)
         
@@ -51,10 +57,10 @@ class InstaBot:
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
             
-        self.scroll_followers_list(int(fol))    
+        self.scroll_followers_list(int(fol))
         scroll_box = self.driver.find_element_by_xpath("//div[@class='isgrP']")
         links = scroll_box.find_elements_by_tag_name('a')
-        usernames = [name.text for name in links if name.text != '']         
+        usernames = [name.text for name in links if name.text != '']
                
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
@@ -66,7 +72,7 @@ class InstaBot:
     def get_followers_of(self):
         
         username = input("Username of target: ")
-        file = self.username + "_followers_" 
+        file = self.username + "_followers_"
         list_ = open(file,"w+")
         sleep(2)
         self.driver.get('https://www.instagram.com/' + username + '/')
@@ -79,10 +85,10 @@ class InstaBot:
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
             
-        self.scroll_followers_list(int(fol))    
+        self.scroll_followers_list(int(fol))
         scroll_box = self.driver.find_element_by_xpath("//div[@class='isgrP']")
         links = scroll_box.find_elements_by_tag_name('a')
-        usernames = [name.text for name in links if name.text != '']         
+        usernames = [name.text for name in links if name.text != '']
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
         
@@ -110,7 +116,7 @@ class InstaBot:
                 except:
                     continue
 
-            while  len(scroll_element.find_elements_by_xpath("//div[@class='By4nA']"))>0:           
+            while  len(scroll_element.find_elements_by_xpath("//div[@class='By4nA']"))>0:
                 print("sleeping")
                 sleep(1)
             
@@ -127,15 +133,15 @@ class InstaBot:
         self.driver.get('https://www.instagram.com/' + username + '/')
         sleep(5)
         
-        no_f = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]").text    
+        no_f = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/div/header/section/ul/li[2]").text
         fol = no_f.replace(" followers", "")
         fol = int(fol.replace(",", ""))
-        print("followers: ",fol)        
+        print("followers: ",fol)
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
         sleep(2)
 
-        count = 0        
+        count = 0
         target = int(input("Enter max people to follow: "))
         
         self.scroll_followers_list(min(target*10,fol))
@@ -172,7 +178,7 @@ class InstaBot:
     
     def follow_likers(self):
         usr = input('Enter target username: ')
-        self.driver.get('https://www.instagram.com/' + usr + '/')     
+        self.driver.get('https://www.instagram.com/' + usr + '/')
         sleep(2)
         
         print('Open the post to scavenge likes. After the post is opened enter "scrap" to continue')
@@ -187,17 +193,17 @@ class InstaBot:
         sleep(5)
         
         target = int(input("Enter max people to follow: "))
-        while count<target:   
-            sleep(2)     
+        while count<target:
+            sleep(2)
             buttons = self.driver.find_elements_by_css_selector(('button[type="button"]'))
             sleep(1)
             for button in buttons:
                 if(button.text == 'Follow'):
-                    sleep(1) 
+                    sleep(1)
                     self.driver.execute_script("return arguments[0].scrollIntoView();", button)
                     self.driver.execute_script("arguments[0].click();", button)
                     
-                    count+=1 
+                    count+=1
                     if count == 50:
                         sleep(20)
                     elif count==100:
@@ -213,6 +219,7 @@ class InstaBot:
         print("Bot is terminated! :(")
         print('Followed ',self.count,' Users')
         log.write("\n\tFollowed total "+str(self.count)+' users and performed '+str(self.task)+' tasks \n__Session_End__ \n\n')
+
 def main():
     print("Fetching Username, Password ")
     pw = protected.pw
