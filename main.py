@@ -263,4 +263,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('You terminated the operation.')
     
-    log.close()m
+    log.close()
