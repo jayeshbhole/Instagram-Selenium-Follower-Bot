@@ -7,9 +7,12 @@ import time
 log = open("log.txt",'a')
 
 class InstaBot:
+    task = 0
     count = 0
     
     def __init__(self, username, pw):
+        global log
+        log.write("__Session start__\n\t")
         self.driver = webdriver.Chrome()
         self.username = username
         self.driver.get("https://instagram.com")
@@ -22,7 +25,6 @@ class InstaBot:
             .click()
         
         try:
-            global log
             sleep(5)
             while self.driver.find_elements_by_xpath("//button[contains(text(), 'Not Now')]") > 0:
                 self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
@@ -56,12 +58,13 @@ class InstaBot:
                
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
-        str_ = "\n\tFetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+self.username
+        str_ = "\n\tTask: "+str(self.task)+" Fetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+self.username
         log.write(str_)
         print("Done extracting")
 
-              
+             
     def get_followers_of(self):
+        
         username = input("Username of target: ")
         file = self.username + "_followers_" 
         list_ = open(file,"w+")
@@ -83,12 +86,13 @@ class InstaBot:
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
         
-        str_ = "\n\tFetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+ username
+        str_ = "\n\tTask: "+str(self.task)+" Fetched " + str(len(usernames)) +'/' + str(fol) +" followers of "+ username
         log.write(str_)
         print("Done extracting")
 
         
     def scroll_followers_list(self, followers):
+        print("Scrolling the list. Dont close the window")
         sleep(5)
         scroll_element  = self.driver.find_element_by_xpath("//div[@class='isgrP']")
         length = 0
@@ -98,18 +102,26 @@ class InstaBot:
         while  length < followers-1  :
             
             sleep(3)
-            last_element  = (scroll_element.find_elements_by_tag_name('button'))[-5]
-            
-            self.driver.execute_script("return arguments[0].scrollIntoView();", last_element)
-            
-            sleep(0.5)
+            elements = scroll_element.find_elements_by_tag_name('button')[-10:]
+            for element in elements:
+                try:
+                    self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+                    sleep(0.25)
+                except:
+                    continue
+
             while  len(scroll_element.find_elements_by_xpath("//div[@class='By4nA']"))>0:           
                 print("sleeping")
-                sleep(2)
+                sleep(1)
             
             sleep(1)
             length = len(scroll_element.find_elements_by_tag_name('button'))
+        print('scroll complete')
     
+    def focus_and_click(self,element):
+        self.driver.execute_script("return arguments[0].scrollIntoView();", element)
+        self.driver.execute_script("arguments[0].click();", element)
+            
     def follow_followers_of(self,username):
         
         self.driver.get('https://www.instagram.com/' + username + '/')
@@ -123,30 +135,39 @@ class InstaBot:
             .click()
         sleep(2)
 
-        count = 0
-        clearline = '\033[A                             \033[A'
-        
+        count = 0        
         target = int(input("Enter max people to follow: "))
         
+        self.scroll_followers_list(min(target*10,fol))
+        
+        print("\nNow following the users~~~~~~~~\n")
         scroll_element  = self.driver.find_element_by_xpath("//div[@class='isgrP']")
         buttons = scroll_element.find_elements_by_tag_name('button')
         for button in buttons:
-            self.driver.execute_script("return arguments[0].scrollIntoView();", button)
-            
-            if button.text == 'Follow':    
-                button.click()
-                count += 1
-                print("Followed",count)
+            try:
+                self.driver.execute_script("return arguments[0].scrollIntoView();", button)
+            except:
+                pass
+            if button.text == 'Follow':
+                sleep(2)
+                try:
+                    self.focus_and_click(button)
+                    count += 1
+                    print("Followed: ",count,end = '\r')
+                except:
+                    continue
                 if count >= target :
+                    print('Target met')
                     break
-                print(clearline)  
                 if count == 50:
                     sleep(20)
                 if count==100:
-                    sleep(30)  
-            sleep(2)
-        
-        log.write("\n\tFollowed "+ str(count) +" followers of "+username)
+                    sleep(30)
+            while button.text == 'follow':
+                sleep(2)
+                self.focus_and_click(button)
+        self.task +=1
+        log.write("\n\tTask :"+str(self.task)+" Followed "+ str(count) +" followers of "+username)
         self.count += count
     
     def follow_likers(self):
@@ -183,20 +204,15 @@ class InstaBot:
                         sleep(30)
     
             sleep(1)
-
-        log.write("\n\tFollowed "+ str(count) +" followers from "+usr+"'s post")
+        task +=1
+        log.write("\n\t Task: "+str(self.task)+" Followed "+ str(count) +" followers from "+usr+"'s post")
         self.count += count
         
     
     def __del__(self):
-        try:
-            self.driver.close()
-        except:
-            pass
         print("Bot is terminated! :(")
         print('Followed ',self.count,' Users')
-        log.write("\n\tFollowed total "+str(self.count)+' users\n\n')
-
+        log.write("\n\tFollowed total "+str(self.count)+' users and performed '+str(self.task)+' tasks \n__Session_End__ \n\n')
 def main():
     print("Fetching Username, Password ")
     pw = protected.pw
