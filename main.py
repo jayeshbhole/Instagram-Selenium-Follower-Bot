@@ -92,8 +92,7 @@ class InstaBot:
         list_.writelines(["%s\n" % follower for follower in usernames])
         list_.close()
 
-        str_ = "\n\tTask "+str(self.task)+": Fetched " + str(len(usernames)
-                                                             ) + '/' + str(fol) + " followers of " + username
+        str_ = "\n\tTask "+str(self.task)+": Fetched " + str(len(usernames)) + '/' + str(fol) + " followers of " + username
         log.write(str_)
         print("Done extracting")
         log.close()
@@ -232,7 +231,7 @@ class InstaBot:
                         sleep(20)
                     elif count == 100:
                         sleep(30)
-                    sleep(8)
+                    sleep(6)
                 tries = 0
                 while tries < 20:
                     if button.text == 'Follow':
@@ -409,4 +408,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print('You terminated the operation.')
+        print('You terminated the operation Manually')
