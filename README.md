@@ -1,6 +1,6 @@
 # Instagram Follower Bot V1.2.4
 
-A python3-selenium web driver based instagram bot to make following people eaasy for content creators.
+A python3-selenium web driver based instagram bot to make following people easy for content creators.
 
 Current working features:
 
@@ -8,9 +8,11 @@ Current working features:
 
 2. Get list of @username's followers.(Gets stored in a .txt file)
 
-3. Follow the followers of @username.
+3. Follow the users followed by some user.
 
-4. Follow likers of some post.
+4. Follow the followers of @username.
+
+5. Follow likers of some post.
 
 Pre-requisites:
 ```
@@ -30,8 +32,10 @@ To use the bot:
 
    5. Follow the text cues given by the terminal and get going.
 
-----
-* To install chrome driver, follow [this video](https://www.youtube.com/watch?v=dz59GsdvUF8)
+*Note: You may need to update your chrome driver and the browser to the latest version.*
 
-* To know more about the selenium installation on MacOS watch [this video](https://youtu.be/d2GBO_QjRlo?t=105)
+----
+* To install chrome driver on Windows, follow [**this video**](https://www.youtube.com/watch?v=dz59GsdvUF8)
+
+* To know more about the selenium and chrome installation on MacOS watch [**this video**](https://youtu.be/d2GBO_QjRlo?t=105)
 ----
