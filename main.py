@@ -39,47 +39,18 @@ class InstaBot:
         log.write(str)
         log.close()
 
-    def get_my_followers(self):
+    def get_followers_of(self, username = ""):
         log = open("log.txt", 'a')
-
-        file = self.username + "_followers_"
+        if not username: username=self.username
+        file = username + "_followers"
         list_ = open(file, "w+")
         sleep(2)
 
-        self.driver.get('https://www.instagram.com/' + self.username + '/')
-        sleep(4)
-        no_f = self.driver.find_element_by_xpath(
-            "/html/body/div[1]/section/main/div/header/section/ul/li[2]").text
-        fol = no_f.replace(" followers", "")
-        print("followers: ", fol)
-        sleep(2)
-        self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
-            .click()
-
-        self.scroll_followers_list(int(fol))
-        scroll_box = self.driver.find_element_by_xpath("//div[@class='isgrP']")
-        links = scroll_box.find_elements_by_tag_name('a')
-        usernames = [name.text for name in links if name.text != '']
-
-        list_.writelines(["%s\n" % follower for follower in usernames])
-        list_.close()
-        str_ = "\n\tTask "+str(self.task)+": Fetched " + str(len(usernames)) + \
-            '/' + str(fol) + " followers of "+self.username
-        log.write(str_)
-        print("Done extracting")
-        log.close()
-
-    def get_followers_of(self, username):
-        log = open("log.txt", 'a')
-        file = username + "_followers_"
-        list_ = open(file, "w+")
-        sleep(2)
         self.driver.get('https://www.instagram.com/' + username + '/')
         sleep(4)
 
-        no_f = self.driver.find_element_by_xpath(
-            "/html/body/div[1]/section/main/div/header/section/ul/li[2]").text
-        fol = no_f.replace(" followers", "")
+        fol = int((self.driver.find_element_by_xpath(
+            "/html/body/div[1]/section/main/div/header/section/ul/li[2]").text).split()[0])
         print("followers: ", fol)
         sleep(2)
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
@@ -344,7 +315,7 @@ def main():
     while True:
         ip = input("\tChoice: ")
         if(ip == '1'):
-            mybot.get_my_followers()
+            mybot.get_followers_of()
 
         elif(ip == '2'):
             user = input("Username of account to be scrapped: ")
@@ -365,7 +336,11 @@ def main():
             mybot.follow_users_followed_by(user)
 
         elif ip == '6':
-            print("\n\tQueue task by entering index of the task \n\t\t\t1 -to get your followers \n\t\t\t2 -to follow followers of @xyz \n\t\t\t3 -to get @username's followers\n\t\t\t99 -to stop queuing")
+            print("""\n\tQueue task by entering index of the task 
+                        \t\t\t1 -to get your followers 
+                        \t\t\t2 -to follow followers of @xyz 
+                        \t\t\t3 -to get @username's followers
+                        \t\t\t99 -to stop queuing""")
             queue = []
             while True:
                 choice = input('\t\t\tEnter task: ')
